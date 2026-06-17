@@ -1,9 +1,10 @@
 package repositories;
 
-import org.apache.catalina.Session;
-import org.apache.catalina.User;
+import Entity.Session;
+import Entity.User; // <-- MUST BE YOUR ENTITY USER
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.stereotype.Repository;
+import java.util.List;
 import java.util.List;
 import java.util.Optional;
 

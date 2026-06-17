@@ -1,0 +1,33 @@
+package services;
+
+import Entity.Session;     // Fixed: Top-level capitalized package path
+import Entity.User;        // Fixed: Top-level capitalized package path
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import repositories.SessionRepository; // Fixed: Pulling from your real top-level repo package
+
+import java.util.Comparator;
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class SessionService {
+    private final SessionRepository sessionRepository;
+    private final int SESSION_LIMIT = 2;
+
+    public void generateNewSession(Entity.User user, String refreshToken) {
+        List<Session> userSessions = sessionRepository.findByUser(user);
+        if (userSessions.size() == SESSION_LIMIT) {
+            userSessions.sort(Comparator.comparing(Session::getLastUsedAt));
+
+            Session leastRecentlyUsedSession = userSessions.getFirst();
+            sessionRepository.delete(leastRecentlyUsedSession);
+        }
+
+        Session newSession = Session.builder()
+                .user(user)
+                .refreshToken(refreshToken)
+                .build();
+        sessionRepository.save(newSession);
+    }
+}
