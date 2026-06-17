@@ -3,9 +3,11 @@ package services;
 import Entity.Session;     // Fixed: Top-level capitalized package path
 import Entity.User;        // Fixed: Top-level capitalized package path
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.web.authentication.session.SessionAuthenticationException;
 import org.springframework.stereotype.Service;
 import repositories.SessionRepository; // Fixed: Pulling from your real top-level repo package
 
+import java.time.LocalDateTime;
 import java.util.Comparator;
 import java.util.List;
 
@@ -29,5 +31,12 @@ public class SessionService {
                 .refreshToken(refreshToken)
                 .build();
         sessionRepository.save(newSession);
+    }
+
+    public void validateSession(String refreshToken) {
+        Session session = sessionRepository.findByRefreshToken(refreshToken)
+                .orElseThrow(() -> new SessionAuthenticationException("Session not found for refreshToken: "+refreshToken));
+        session.setLastUsedAt(LocalDateTime.now());
+        sessionRepository.save(session);
     }
 }

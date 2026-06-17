@@ -4,6 +4,7 @@ package services;
 import DTO.SignUpDTO;
 import DTO.UserDTO;
 import Entity.User;
+import exceptions.ResourceNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -47,6 +48,10 @@ public class UserService implements UserDetailsService {
         userEntity.setPassword(passwordEncoder.encode(signUpDTO.getPassword()));
         User savedUser=userRepository.save(userEntity);
         return modelMapper.map(savedUser, UserDTO.class);
+    }
+
+    public User save(User newUser) {
+        return userRepository.save(newUser);
     }
 
 }

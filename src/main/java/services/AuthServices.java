@@ -34,4 +34,13 @@ public class AuthServices {
         return new LoginResponseDTO(user.getId(),  accessToken, refreshToken);
 
     }
+
+    public LoginResponseDTO refreshToken(String refreshToken) {
+        Long userId = jwtService.getUserIdFromToken(refreshToken);
+        sessionService.validateSession(refreshToken);
+        User user = userService.getUserById(userId);
+
+        String accessToken = jwtService.generateAccessToken(user);
+        return new LoginResponseDTO(user.getId(), accessToken, refreshToken);
+    }
 }
